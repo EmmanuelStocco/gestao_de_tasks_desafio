@@ -10,6 +10,7 @@ interface AuthState {
   login: (authResponse: AuthResponse) => void
   logout: () => void
   updateTokens: (accessToken: string) => void
+  setTokens: (accessToken: string, refreshToken: string) => void
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -37,6 +38,9 @@ export const useAuthStore = create<AuthState>()(
       },
       updateTokens: (accessToken: string) => {
         set({ accessToken })
+      },
+      setTokens: (accessToken: string, refreshToken: string) => {
+        set({ accessToken, refreshToken })
       },
     }),
     {

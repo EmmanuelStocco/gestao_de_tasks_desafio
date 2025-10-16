@@ -4,8 +4,8 @@ import { RabbitMQEvent } from '@gestao-tarefas/types';
 
 @Injectable()
 export class RabbitMQService implements OnModuleInit, OnModuleDestroy {
-  private connection: amqp.Connection | null = null;
-  private channel: amqp.Channel | null = null;
+  private connection: any = null;
+  private channel: any = null;
   private notificationsService: any;
 
   async onModuleInit() {

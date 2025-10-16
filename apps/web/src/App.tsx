@@ -9,10 +9,11 @@ import { TaskCard } from '@/components/TaskCard'
 import { Plus, LogOut, Calendar, User, MessageCircle } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { Task, TaskPriority, TaskStatus } from '@gestao-tarefas/types'
+import { useAuthStore } from '@/store/auth'
+import api from '@/lib/api'
 
 function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false)
-  const [user, setUser] = useState(null)
+  const { user, isAuthenticated, logout } = useAuthStore()
   const [showAuthModal, setShowAuthModal] = useState(false)
   const [showCreateModal, setShowCreateModal] = useState(false)
   const [selectedTask, setSelectedTask] = useState<Task | null>(null)
@@ -20,16 +21,20 @@ function App() {
   const [tasks, setTasks] = useState<Task[]>([])
   const [loading, setLoading] = useState(false)
 
+  // Carregar tarefas quando usuário estiver autenticado
+  useEffect(() => {
+    if (isAuthenticated) {
+      loadTasks()
+    }
+  }, [isAuthenticated])
+
   const handleLogout = () => {
-    setIsAuthenticated(false)
-    setUser(null)
+    logout()
     setTasks([])
     toast.success('Logout realizado com sucesso!')
   }
 
   const handleLogin = (userData: any) => {
-    setIsAuthenticated(true)
-    setUser(userData)
     setShowAuthModal(false)
     loadTasks()
   }
@@ -37,73 +42,26 @@ function App() {
   const loadTasks = async () => {
     setLoading(true)
     try {
-      // Simular carregamento de tarefas
-      const mockTasks: Task[] = [
-        {
-          id: '1',
-          title: 'Implementar autenticação',
-          description: 'Criar sistema de login e registro de usuários',
-          deadline: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 dias
-          priority: TaskPriority.HIGH,
-          status: TaskStatus.IN_PROGRESS,
-          assignedUsers: [{ id: '1', username: 'dev1', email: 'dev1@test.com', password: '', createdAt: new Date(), updatedAt: new Date() }],
-          comments: [],
-          createdBy: { id: '1', username: 'admin', email: 'admin@test.com', password: '', createdAt: new Date(), updatedAt: new Date() },
-          createdAt: new Date(),
-          updatedAt: new Date()
-        },
-        {
-          id: '2',
-          title: 'Criar interface de tarefas',
-          description: 'Desenvolver componentes para listar e gerenciar tarefas',
-          deadline: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000), // 5 dias
-          priority: TaskPriority.MEDIUM,
-          status: TaskStatus.TODO,
-          assignedUsers: [],
-          comments: [],
-          createdBy: { id: '1', username: 'admin', email: 'admin@test.com', password: '', createdAt: new Date(), updatedAt: new Date() },
-          createdAt: new Date(),
-          updatedAt: new Date()
-        },
-        {
-          id: '3',
-          title: 'Configurar Docker',
-          description: 'Configurar containers para todos os serviços',
-          deadline: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000), // 3 dias
-          priority: TaskPriority.URGENT,
-          status: TaskStatus.DONE,
-          assignedUsers: [{ id: '1', username: 'dev1', email: 'dev1@test.com', password: '', createdAt: new Date(), updatedAt: new Date() }],
-          comments: [],
-          createdBy: { id: '1', username: 'admin', email: 'admin@test.com', password: '', createdAt: new Date(), updatedAt: new Date() },
-          createdAt: new Date(),
-          updatedAt: new Date()
-        }
-      ]
-      setTasks(mockTasks)
-    } catch (error) {
+      const response = await api.get('/api/tasks')
+      setTasks(response.data.data || [])
+    } catch (error: any) {
       toast.error('Erro ao carregar tarefas')
+      console.error('Error loading tasks:', error)
     } finally {
       setLoading(false)
     }
   }
 
-  const handleCreateTask = (taskData: any) => {
-    const newTask: Task = {
-      id: Date.now().toString(),
-      title: taskData.title,
-      description: taskData.description,
-      deadline: new Date(taskData.deadline),
-      priority: taskData.priority,
-      status: TaskStatus.TODO,
-      assignedUsers: [],
-      comments: [],
-      createdBy: user,
-      createdAt: new Date(),
-      updatedAt: new Date()
+  const handleCreateTask = async (taskData: any) => {
+    try {
+      const response = await api.post('/api/tasks', taskData)
+      setTasks(prev => [response.data, ...prev])
+      toast.success('Tarefa criada com sucesso!')
+      setShowCreateModal(false)
+    } catch (error: any) {
+      toast.error('Erro ao criar tarefa')
+      console.error('Error creating task:', error)
     }
-    setTasks(prev => [newTask, ...prev])
-    toast.success('Tarefa criada com sucesso!')
-    setShowCreateModal(false)
   }
 
   const handleTaskView = (task: Task) => {
@@ -111,15 +69,28 @@ function App() {
     setShowTaskModal(true)
   }
 
-  const handleTaskUpdate = (updatedTask: Task) => {
-    setTasks(prev => prev.map(task => 
-      task.id === updatedTask.id ? updatedTask : task
-    ))
+  const handleTaskUpdate = async (updatedTask: Task) => {
+    try {
+      const response = await api.patch(`/api/tasks/${updatedTask.id}`, updatedTask)
+      setTasks(prev => prev.map(task => 
+        task.id === updatedTask.id ? response.data : task
+      ))
+      toast.success('Tarefa atualizada com sucesso!')
+    } catch (error: any) {
+      toast.error('Erro ao atualizar tarefa')
+      console.error('Error updating task:', error)
+    }
   }
 
-  const handleTaskDelete = (taskId: string) => {
-    setTasks(prev => prev.filter(task => task.id !== taskId))
-    toast.success('Tarefa deletada com sucesso!')
+  const handleTaskDelete = async (taskId: string) => {
+    try {
+      await api.delete(`/api/tasks/${taskId}`)
+      setTasks(prev => prev.filter(task => task.id !== taskId))
+      toast.success('Tarefa deletada com sucesso!')
+    } catch (error: any) {
+      toast.error('Erro ao deletar tarefa')
+      console.error('Error deleting task:', error)
+    }
   }
 
   if (!isAuthenticated) {

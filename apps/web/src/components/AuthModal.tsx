@@ -42,56 +42,33 @@ export function AuthModal({ isOpen, onClose, onLogin }: AuthModalProps) {
 
   const onLoginSubmit = async (data: LoginForm) => {
     try {
-      // Validação simples
-      if (!data.email || !data.password) {
-        toast.error('Preencha todos os campos')
-        return
-      }
-
-      // Simular login para demonstração
-      const userData = {
-        id: '1',
-        email: data.email,
-        username: data.email.split('@')[0], // Usar parte do email como username
-        createdAt: new Date(),
-        updatedAt: new Date()
-      }
+      const response = await api.post('/api/auth/login', data)
+      const { accessToken, refreshToken, user } = response.data
       
-      onLogin(userData)
+      // Salvar tokens no store
+      useAuthStore.getState().setTokens(accessToken, refreshToken)
+      
+      onLogin(user)
       toast.success('Login realizado com sucesso!')
       onClose()
     } catch (error: any) {
-      toast.error('Erro ao fazer login')
+      toast.error(error.response?.data?.message || 'Erro ao fazer login')
     }
   }
 
   const onRegisterSubmit = async (data: RegisterForm) => {
     try {
-      // Validação simples
-      if (!data.email || !data.username || !data.password) {
-        toast.error('Preencha todos os campos')
-        return
-      }
-
-      if (data.password.length < 6) {
-        toast.error('Senha deve ter pelo menos 6 caracteres')
-        return
-      }
-
-      // Simular registro para demonstração
-      const userData = {
-        id: '1',
-        email: data.email,
-        username: data.username,
-        createdAt: new Date(),
-        updatedAt: new Date()
-      }
+      const response = await api.post('/api/auth/register', data)
+      const { accessToken, refreshToken, user } = response.data
       
-      onLogin(userData)
+      // Salvar tokens no store
+      useAuthStore.getState().setTokens(accessToken, refreshToken)
+      
+      onLogin(user)
       toast.success('Conta criada com sucesso!')
       onClose()
     } catch (error: any) {
-      toast.error('Erro ao criar conta')
+      toast.error(error.response?.data?.message || 'Erro ao criar conta')
     }
   }
 

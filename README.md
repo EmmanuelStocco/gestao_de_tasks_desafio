@@ -6,15 +6,17 @@ Um sistema completo de gestão de tarefas construído com arquitetura de microse
 
 ### ✅ Autenticação
 - Login e registro de usuários
-- JWT tokens (mock para demonstração)
+- JWT tokens com refresh token
 - Interface de autenticação moderna
+- Integração completa com backend
 
 ### ✅ Gestão de Tarefas (CRUD Completo)
 - **Criar** tarefas com título, descrição, prazo e prioridade
-- **Listar** tarefas em grid responsivo
+- **Listar** tarefas em grid responsivo (dados reais do banco)
 - **Visualizar** detalhes completos da tarefa
 - **Editar** tarefas existentes
 - **Deletar** tarefas com confirmação
+- **Integração completa** com API backend
 
 ### ✅ Sistema de Comentários
 - Adicionar comentários às tarefas
@@ -162,12 +164,14 @@ gestao_tarefas/
 
 ## 📊 Status do Projeto
 
-- ✅ **Frontend**: 100% funcional
+- ✅ **Frontend**: 100% funcional com integração real
 - ✅ **API Gateway**: 100% funcional
+- ✅ **Backend Services**: 100% funcional
 - ✅ **Banco de Dados**: 100% funcional
 - ✅ **Message Broker**: 100% funcional
 - ✅ **Docker**: 100% funcional
 - ✅ **Interface**: 100% responsiva
+- ✅ **Integração Frontend-Backend**: 100% funcional
  
 
 ## 🤝 Contribuição
