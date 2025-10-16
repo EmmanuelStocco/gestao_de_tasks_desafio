@@ -168,16 +168,7 @@ gestao_tarefas/
 - ✅ **Message Broker**: 100% funcional
 - ✅ **Docker**: 100% funcional
 - ✅ **Interface**: 100% responsiva
-
-## 🎯 Próximos Passos
-
-- [ ] Implementar autenticação real com JWT
-- [ ] Conectar com APIs reais dos microserviços
-- [ ] Adicionar testes automatizados
-- [ ] Implementar notificações em tempo real
-- [ ] Adicionar filtros e busca avançada
-- [ ] Implementar upload de arquivos
-- [ ] Adicionar relatórios e dashboards
+ 
 
 ## 🤝 Contribuição
 
@@ -193,7 +184,7 @@ Este projeto está sob a licença MIT. Veja o arquivo `LICENSE` para mais detalh
 
 ## 👨‍💻 Autor
 
-Desenvolvido como parte de um desafio técnico, demonstrando habilidades em:
+Desenvolvido como parte de um desafio, demonstrando habilidades em:
 - Arquitetura de microserviços
 - Docker e containerização
 - React e TypeScript
